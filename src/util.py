@@ -1,13 +1,13 @@
 import struct
 import socket
 import logging
-logging.basicConfig(format = u'[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s', level = logging.INFO)
+logging.basicConfig(format=u'[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s', level = logging.INFO)
 
 
 def compara_endianness(numar):
-    print "Numarul: ", numar
-    print "Network Order (Big Endian): ", [bin(ord(byte)) for byte in struct.pack('!H', numar)]
-    print "Little Endian: ", [bin(ord(byte)) for byte in struct.pack('H', numar)]
+    print ("Numarul: ", numar)
+    print ("Network Order (Big Endian): ", [bin(ord(byte)) for byte in struct.pack('!H', numar)])
+    print ("Little Endian: ", [bin(ord(byte)) for byte in struct.pack('H', numar)])
 
 
 
@@ -98,11 +98,13 @@ def construieste_mesaj_raw(ip_src, ip_dst, port_s, port_d, mesaj, protocol = soc
         sumei de control
     '''
 
-    mesaj_binar =  ip_pseudo_header + udp_header + checksum_byte # + mesaj_bytes
+    mesaj_binar = ip_pseudo_header + udp_header + checksum_byte # + mesaj_bytes
 
+    print(mesaj_binar)
     return mesaj_binar
 
 
 
 if __name__ == '__main__':
     compara_endianness(10000)
+    construieste_mesaj_raw('122.122.122.122','133.133.133.133',600,500,"Heya")

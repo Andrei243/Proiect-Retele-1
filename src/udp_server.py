@@ -2,6 +2,7 @@
 import socket
 import logging
 import argparse
+import struct
 
 from util import construieste_mesaj_raw
 
@@ -16,7 +17,33 @@ def calculeaza_checksum(mesaj_binar):
         exemplu de calcul aici:
         https://www.securitynik.com/2015/08/calculating-udp-checksum-with-taste-of.html
     '''
-    return 20000
+    nrImpar = False
+    if len(mesaj_binar) % 2 == 1:
+        nrImpar = True
+    nrBytes=len(mesaj_binar)//2
+    if(nrImpar):
+        nrBytes += 1
+    bytes = []
+
+    for i in range(nrBytes):
+        if nrImpar and i == nrBytes-1:
+            byte = struct.unpack("B", mesaj_binar[-1])
+            byte *= 256
+        else:
+            byte = struct.unpack("!H", mesaj_binar[i*2: (i+1)*2])
+        bytes.append(byte[0])
+    checksum=0
+    for i in bytes:
+        checksum += i
+    pad=2**16
+
+    checksumfin=checksum%pad
+    checksum=checksum/pad
+    while checksum>0:
+        checksumfin+=checksum%pad
+        checksum/=pad
+
+    return checksumfin
 
 
 
