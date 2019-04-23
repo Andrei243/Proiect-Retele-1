@@ -2,18 +2,25 @@
 import socket
 import logging
 import argparse
+from util import construieste_mesaj_raw
+from udp_server import calculeaza_checksum
 
 logging.basicConfig(format = u'[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s', level = logging.NOTSET)
 
 
 def send_message(address, message):
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    ip_server = socket.gethostbyname(socket.gethostname())
+
+
     try:
         logging.info('Trimitem mesajul "%s" catre %s:%d', message, address[0], address[1])
         sock.sendto(message.encode('utf-8'), address)
 
         logging.info('Asteptam un raspuns...')
         data, server = sock.recvfrom(4096)
+        mesaj_binar = construieste_mesaj_raw(ip_server,server[0],address[1],server[1],data)
+        print(calculeaza_checksum(mesaj_binar))
         logging.info('Content primit: "%s"', data)
 
     finally:

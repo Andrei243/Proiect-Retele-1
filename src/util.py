@@ -47,6 +47,9 @@ def construieste_mesaj_raw(ip_src, ip_dst, port_s, port_d, mesaj, protocol = soc
     port_s_bytes = struct.pack('!H', port_s)
     port_d_bytes = struct.pack('!H', port_d)
 
+    print(port_d)
+    print("sda ", port_d_bytes)
+
     '''
         2. adrese IP in format binar
         inet_aton - https://linux.die.net/man/3/inet_aton
@@ -78,7 +81,7 @@ def construieste_mesaj_raw(ip_src, ip_dst, port_s, port_d, mesaj, protocol = soc
         5. lenght = nr de bytes din header-ul UDP + nr de bytes din mesaj 
         TODO: completati campul length  
     '''
-    length = 8
+    length = 20+len(mesaj)
     length_bytes = struct.pack('!H', length)
 
     '''
@@ -97,10 +100,17 @@ def construieste_mesaj_raw(ip_src, ip_dst, port_s, port_d, mesaj, protocol = soc
         8. TODO: codificati un mesaj in format de bytes si adaugati-l in calculul 
         sumei de control
     '''
+    litere=[]
+    for i in mesaj:
+        litere.append(struct.pack("c", i))
 
-    mesaj_binar = ip_pseudo_header + udp_header + checksum_byte # + mesaj_bytes
 
-    print(mesaj_binar)
+
+    mesaj_binar = ip_pseudo_header + udp_header + checksum_byte
+    for i in litere:
+        mesaj_binar=mesaj_binar+i
+
+    print("sd",mesaj_binar)
     return mesaj_binar
 
 

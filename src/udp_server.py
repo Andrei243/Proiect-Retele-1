@@ -3,6 +3,7 @@ import socket
 import logging
 import argparse
 import struct
+import ctypes
 
 from util import construieste_mesaj_raw
 
@@ -21,29 +22,33 @@ def calculeaza_checksum(mesaj_binar):
     if len(mesaj_binar) % 2 == 1:
         nrImpar = True
     nrBytes=len(mesaj_binar)//2
-    if(nrImpar):
+    print(len(mesaj_binar))
+    if nrImpar:
+        print("NR IMPAR")
         nrBytes += 1
     bytes = []
 
     for i in range(nrBytes):
         if nrImpar and i == nrBytes-1:
             byte = struct.unpack("B", mesaj_binar[-1])
-            byte *= 256
+            bytes.append(byte[0] << 2**8)
         else:
             byte = struct.unpack("!H", mesaj_binar[i*2: (i+1)*2])
-        bytes.append(byte[0])
+            bytes.append(byte[0])
     checksum=0
+    for i in range(6):
+        bytes[i] = 0
     for i in bytes:
         checksum += i
     pad=2**16
 
-    checksumfin=checksum%pad
+    checksumfin=ctypes.c_uint16(checksum%pad).value
     checksum=checksum/pad
     while checksum>0:
-        checksumfin+=checksum%pad
         checksum/=pad
+        checksumfin+=ctypes.c_uint16(checksum%pad).value
 
-    return checksumfin
+    return ctypes.c_uint16(~checksumfin).value
 
 
 
