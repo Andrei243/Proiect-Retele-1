@@ -10,8 +10,10 @@ logging.basicConfig(format = u'[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s] 
 
 def send_message(address, message):
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    ip_server = socket.gethostbyname(socket.gethostname())
-
+    ip_actual = socket.gethostbyname(socket.gethostname())
+    port=20000
+    address_act=(ip_actual,port)
+    sock.bind(address_act)
 
     try:
         logging.info('Trimitem mesajul "%s" catre %s:%d', message, address[0], address[1])
@@ -19,9 +21,10 @@ def send_message(address, message):
 
         logging.info('Asteptam un raspuns...')
         data, server = sock.recvfrom(4096)
-        mesaj_binar = construieste_mesaj_raw(ip_server,server[0],address[1],server[1],data)
-        print(calculeaza_checksum(mesaj_binar))
+        mesaj_binar = construieste_mesaj_raw(ip_actual,server[0],port,server[1],data)
         logging.info('Content primit: "%s"', data)
+        print(hex(calculeaza_checksum(mesaj_binar)))
+
 
     finally:
         logging.info('closing socket')
