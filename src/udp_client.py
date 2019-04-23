@@ -23,7 +23,7 @@ def send_message(address, message):
         data, server = sock.recvfrom(4096)
         mesaj_binar = construieste_mesaj_raw(ip_actual,server[0],port,server[1],data)
         logging.info('Content primit: "%s"', data)
-        print(hex(calculeaza_checksum(mesaj_binar)))
+        logging.info('Checksum calculat: %s', str(hex(calculeaza_checksum(mesaj_binar))))
 
 
     finally:

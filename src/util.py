@@ -47,8 +47,8 @@ def construieste_mesaj_raw(ip_src, ip_dst, port_s, port_d, mesaj, protocol = soc
     port_s_bytes = struct.pack('!H', port_s)
     port_d_bytes = struct.pack('!H', port_d)
 
-    print(port_d)
-    print("sda ", port_d_bytes)
+    # print(port_d)
+    # print("sda ", port_d_bytes)
 
     '''
         2. adrese IP in format binar
@@ -108,7 +108,7 @@ def construieste_mesaj_raw(ip_src, ip_dst, port_s, port_d, mesaj, protocol = soc
     for i in litere:
         mesaj_binar=mesaj_binar+i
 
-    print(mesaj_binar)
+    # print(mesaj_binar)
     return mesaj_binar
 
 
