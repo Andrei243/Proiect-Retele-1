@@ -22,31 +22,29 @@ def calculeaza_checksum(mesaj_binar):
     if len(mesaj_binar) % 2 == 1:
         nrImpar = True
     nrBytes=len(mesaj_binar)//2
-    print(len(mesaj_binar))
+    # print(len(mesaj_binar))
     if nrImpar:
-        print("NR IMPAR")
+        # print("NR IMPAR")
         nrBytes += 1
     bytes = []
 
     for i in range(nrBytes):
         if nrImpar and i == nrBytes-1:
-            byte = struct.unpack("B", mesaj_binar[-1])
-            bytes.append(byte[0] << 2**8)
+            byte = struct.unpack("B", mesaj_binar[i*2])
+            bytes.append(byte[0] << 8)
         else:
             byte = struct.unpack("!H", mesaj_binar[i*2: (i+1)*2])
             bytes.append(byte[0])
     checksum=0
-    for i in range(6):
-        bytes[i] = 0
     for i in bytes:
         checksum += i
-    pad=2**16
 
-    checksumfin=ctypes.c_uint16(checksum%pad).value
-    checksum=checksum/pad
-    while checksum>0:
-        checksum/=pad
-        checksumfin+=ctypes.c_uint16(checksum%pad).value
+    checksumfin = ctypes.c_uint16(checksum & 0b1111111111111111).value
+    checksum = checksum >> 16
+    if checksum > 0:
+        checksumfin += ctypes.c_uint16(checksum & 0b1111111111111111).value
+        checksum >>= 16
+
 
     return ctypes.c_uint16(~checksumfin).value
 

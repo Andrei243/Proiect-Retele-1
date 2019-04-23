@@ -81,7 +81,7 @@ def construieste_mesaj_raw(ip_src, ip_dst, port_s, port_d, mesaj, protocol = soc
         5. lenght = nr de bytes din header-ul UDP + nr de bytes din mesaj 
         TODO: completati campul length  
     '''
-    length = 20+len(mesaj)
+    length = 8+len(mesaj)
     length_bytes = struct.pack('!H', length)
 
     '''
@@ -93,7 +93,7 @@ def construieste_mesaj_raw(ip_src, ip_dst, port_s, port_d, mesaj, protocol = soc
     '''
         7. concatenam octetii din headerul UDP cu checksum setat pe 0
     '''
-    checksum_byte = struct.pack('!B', 0)
+    checksum_byte = struct.pack('!H', 0)
     udp_header = port_s_bytes + port_d_bytes + length_bytes + checksum_byte
     
     '''
@@ -104,13 +104,11 @@ def construieste_mesaj_raw(ip_src, ip_dst, port_s, port_d, mesaj, protocol = soc
     for i in mesaj:
         litere.append(struct.pack("c", i))
 
-
-
-    mesaj_binar = ip_pseudo_header + udp_header + checksum_byte
+    mesaj_binar = ip_pseudo_header + udp_header
     for i in litere:
         mesaj_binar=mesaj_binar+i
 
-    print("sd",mesaj_binar)
+    print(mesaj_binar)
     return mesaj_binar
 
 
